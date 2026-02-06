@@ -71,6 +71,42 @@
             </div>
         </div>
 
+        <!-- Log Modal -->
+        <div id="log-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-neutral-900 border border-neutral-800 p-6 rounded-xl w-full max-w-sm shadow-2xl space-y-5">
+                <div class="flex justify-between items-center border-b border-neutral-800 pb-2">
+                    <h3 class="header-text text-lg text-white">Log Item</h3>
+                    <div class="flex gap-4">
+                        <button onclick="setInputMode('daily')" id="modal-tab-daily" class="tab-active pb-1 text-xs header-text uppercase tracking-widest transition-all">Daily</button>
+                        <button onclick="setInputMode('library')" id="modal-tab-library" class="tab-inactive pb-1 text-xs header-text uppercase tracking-widest transition-all">Library</button>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="relative flex items-center group">
+                        <div class="absolute left-3 z-10 pointer-events-none transition-colors duration-300">
+                            <svg id="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-500 group-focus-within:text-amber-500"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <svg id="loading-spinner" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden animate-spin text-amber-500"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
+                        </div>
+                        <input 
+                            id="modal-food-input"
+                            type="text"
+                            inputmode="text"
+                            enterkeyhint="go"
+                            placeholder="Describe food or enter calories..."
+                            class="w-full bg-neutral-800 border border-neutral-700 rounded-lg py-3 pl-10 pr-4 text-white outline-none focus:ring-2 focus:ring-amber-500 placeholder-neutral-500 transition-all"
+                        >
+                    </div>
+                    <p id="modal-error-msg" class="hidden text-rose-400 font-bold text-xs px-1"></p>
+
+                    <div class="flex gap-3">
+                        <button onclick="closeLogModal()" class="flex-1 py-3 rounded-lg font-bold text-neutral-400 hover:bg-neutral-800 transition-colors">Cancel</button>
+                        <button onclick="analyzeFood()" class="flex-1 py-3 rounded-lg font-bold bg-amber-500 text-black hover:bg-amber-400 transition-colors">Log</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Dashboard Header -->
         <header class="space-y-6">
             <div class="bg-neutral-900/50 backdrop-blur-sm p-6 rounded-xl border border-neutral-800 shadow-2xl">
@@ -98,38 +134,18 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-2 space-y-6">
-                <!-- Input Section -->
-                <section class="bg-neutral-900 p-6 rounded-xl border border-neutral-800 shadow-xl space-y-4">
-                    <div class="flex items-center gap-6 border-b border-neutral-800 pb-1">
-                        <button onclick="setInputMode('daily')" id="tab-daily" class="tab-active pb-2 header-text transition-all">
-                            Log to Daily
-                        </button>
-                        <button onclick="setInputMode('library')" id="tab-library" class="tab-inactive pb-2 header-text transition-all">
-                            Save to Library
-                        </button>
-                    </div>
-
-                    <div class="space-y-3">
-                        <div class="relative flex items-center group">
-                            <div class="absolute left-3 z-10 pointer-events-none transition-colors duration-300">
-                                <svg id="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-500 group-focus-within:text-amber-500"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                                <svg id="loading-spinner" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden animate-spin text-amber-500"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
-                            </div>
-                            <input 
-                                id="food-input"
-                                type="text"
-                                inputmode="text"
-                                placeholder="Describe food or enter calories..."
-                                class="w-full bg-neutral-850 border border-transparent focus:border-neutral-700 rounded-lg py-4 pl-10 pr-4 outline-none focus:ring-2 focus:ring-amber-500/50 transition-all block text-white placeholder-neutral-600"
-                            >
+                <!-- Trigger Button Section -->
+                <button onclick="openLogModal()" class="w-full bg-neutral-900 p-6 rounded-xl border border-neutral-800 shadow-xl flex items-center justify-between group hover:border-amber-500/50 transition-all cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-neutral-800 p-3 rounded-lg text-amber-500 group-hover:bg-amber-500 group-hover:text-black transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                         </div>
-                        <!-- Separate button to match goal modal formatting -->
-                        <button onclick="analyzeFood()" class="w-full bg-amber-500 text-black font-bold py-4 rounded-lg transition-colors hover:bg-amber-400 min-h-[44px] text-center uppercase tracking-widest text-xs">
-                            Log Entry
-                        </button>
+                        <div class="text-left">
+                            <span class="block header-text text-neutral-200 group-hover:text-white transition-colors text-lg">Log Food</span>
+                            <span class="block text-xs text-neutral-500 uppercase tracking-widest group-hover:text-neutral-400">Add Entry to Daily or Library</span>
+                        </div>
                     </div>
-                    <p id="error-msg" class="hidden mt-3 text-rose-400 font-bold px-2"></p>
-                </section>
+                </button>
 
                 <!-- Daily Log -->
                 <section class="bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden shadow-lg">
@@ -160,15 +176,18 @@
         let lastResetDate = "";
 
         const elements = {
-            input: document.getElementById('food-input'),
+            logModal: document.getElementById('log-modal'),
+            modalInput: document.getElementById('modal-food-input'),
+            modalTabDaily: document.getElementById('modal-tab-daily'),
+            modalTabLibrary: document.getElementById('modal-tab-library'),
+            modalError: document.getElementById('modal-error-msg'),
+            spinner: document.getElementById('loading-spinner'),
+            searchIcon: document.getElementById('search-icon'),
+            
             log: document.getElementById('log-container'),
             library: document.getElementById('library-container'),
             stats: document.getElementById('totals-grid'),
-            spinner: document.getElementById('loading-spinner'),
-            searchIcon: document.getElementById('search-icon'),
-            error: document.getElementById('error-msg'),
-            tabDaily: document.getElementById('tab-daily'),
-            tabLibrary: document.getElementById('tab-library'),
+            
             goalDisplay: document.getElementById('goal-display'),
             progressBar: document.getElementById('progress-bar'),
             percentDisplay: document.getElementById('percent-display'),
@@ -200,15 +219,30 @@
                 navigator.serviceWorker.register('./sw.js').catch(() => {});
             }
             render();
-            elements.input.focus();
+        }
+
+        // --- UI Modes ---
+
+        function openLogModal() {
+            elements.logModal.classList.remove('hidden');
+            elements.modalInput.value = "";
+            elements.modalError.classList.add('hidden');
+            setTimeout(() => elements.modalInput.focus(), 100);
+        }
+
+        function closeLogModal() {
+            elements.logModal.classList.add('hidden');
         }
 
         function setInputMode(mode) {
             inputMode = mode;
-            elements.tabDaily.className = mode === 'daily' ? 'tab-active pb-2 header-text' : 'tab-inactive pb-2 header-text';
-            elements.tabLibrary.className = mode === 'library' ? 'tab-active pb-2 header-text' : 'tab-inactive pb-2 header-text';
-            elements.input.placeholder = mode === 'daily' ? "Describe food or enter calories..." : "Item to save...";
+            elements.modalTabDaily.className = mode === 'daily' ? 'tab-active pb-1 text-xs header-text uppercase tracking-widest transition-all' : 'tab-inactive pb-1 text-xs header-text uppercase tracking-widest transition-all';
+            elements.modalTabLibrary.className = mode === 'library' ? 'tab-active pb-1 text-xs header-text uppercase tracking-widest transition-all' : 'tab-inactive pb-1 text-xs header-text uppercase tracking-widest transition-all';
+            elements.modalInput.placeholder = mode === 'daily' ? "Describe food or enter calories..." : "Item to save...";
+            elements.modalInput.focus();
         }
+
+        // --- Goal Logic ---
 
         function editGoal() {
             elements.goalModal.classList.remove('hidden');
@@ -229,31 +263,36 @@
             }
         }
 
+        // --- Analysis Logic ---
+
         async function fetchWithRetry(url, options, retries = 5, delay = 1000) {
             for (let i = 0; i < retries; i++) {
                 try {
                     const response = await fetch(url, options);
                     if (response.ok) return response;
+                    // Stop retrying on client errors (4xx)
+                    if (response.status >= 400 && response.status < 500) {
+                        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                    }
                 } catch (e) {
-                    if (i === retries - 1) throw e;
+                    // Don't retry if it's a client error we just threw
+                    if (i === retries - 1 || e.message.startsWith("API Error")) throw e;
                 }
                 await new Promise(res => setTimeout(res, delay));
                 delay *= 2;
             }
+            throw new Error('Network timeout');
         }
 
         async function analyzeFood() {
-            const text = elements.input.value.trim();
+            const text = elements.modalInput.value.trim();
             if (!text) return;
 
-            elements.input.blur();
-
+            // Simple numeric check first
             const numeric = parseFloat(text);
             if (!isNaN(numeric) && isFinite(text)) {
                 const item = { name: "Manual Entry", calories: numeric, protein: 0, carbs: 0, fat: 0 };
-                if (inputMode === 'daily') addLogItem(item);
-                else addLibraryItem(item);
-                elements.input.value = "";
+                finalizeItem(item);
                 return;
             }
 
@@ -270,20 +309,19 @@
                 });
                 const data = await response.json();
                 const result = JSON.parse(data.candidates[0].content.parts[0].text);
-                
-                if (inputMode === 'daily') {
-                    addLogItem(result);
-                } else {
-                    addLibraryItem(result);
-                }
-                
-                elements.input.value = "";
+                finalizeItem(result);
             } catch (err) {
-                elements.error.textContent = "Error processing request.";
-                elements.error.classList.remove('hidden');
+                elements.modalError.textContent = "Error: Could not analyze food.";
+                elements.modalError.classList.remove('hidden');
             } finally {
                 setLoading(false);
             }
+        }
+
+        function finalizeItem(item) {
+            if (inputMode === 'daily') addLogItem(item);
+            else addLibraryItem(item);
+            closeLogModal();
         }
 
         function addLogItem(item) {
@@ -321,7 +359,7 @@
         function setLoading(val) {
             elements.spinner.classList.toggle('hidden', !val);
             elements.searchIcon.classList.toggle('hidden', val);
-            elements.error.classList.add('hidden');
+            elements.modalError.classList.add('hidden');
         }
 
         function render() {
@@ -383,7 +421,7 @@
             return `<div class="flex flex-col"><span class="header-text text-neutral-500 text-[10px] uppercase tracking-widest">${label}</span><div class="header-text ${colorClass} mt-1">${val}<span class="ml-0.5 opacity-50 text-neutral-400 font-normal text-[10px]">${unit}</span></div></div>`;
         }
 
-        elements.input.addEventListener('keydown', (e) => {
+        elements.modalInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') analyzeFood();
         });
         
