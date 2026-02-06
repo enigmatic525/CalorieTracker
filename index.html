@@ -154,6 +154,7 @@
         let savedItems = [];
         let dailyGoal = 2000;
         let inputMode = 'daily';
+        let lastResetDate = "";
 
         const elements = {
             input: document.getElementById('food-input'),
@@ -173,8 +174,23 @@
         };
 
         function init() {
-            const data = JSON.parse(localStorage.getItem('calorie_tracker_data') || '{"log":[],"library":[],"goal":2000}');
-            dailyLog = data.log || [];
+            const data = JSON.parse(localStorage.getItem('calorie_tracker_data') || '{"log":[],"library":[],"goal":2000,"lastResetDate":""}');
+            const today = new Date().toDateString();
+
+            if (data.lastResetDate !== today) {
+                dailyLog = [];
+                lastResetDate = today;
+                // Immediate save to prevent duplicate reset logic triggers
+                localStorage.setItem('calorie_tracker_data', JSON.stringify({
+                    ...data,
+                    log: [],
+                    lastResetDate: today
+                }));
+            } else {
+                dailyLog = data.log || [];
+                lastResetDate = data.lastResetDate;
+            }
+
             savedItems = data.library || [];
             dailyGoal = data.goal || 2000;
             
@@ -289,7 +305,12 @@
         }
 
         function saveAndRender() {
-            localStorage.setItem('calorie_tracker_data', JSON.stringify({ log: dailyLog, library: savedItems, goal: dailyGoal }));
+            localStorage.setItem('calorie_tracker_data', JSON.stringify({ 
+                log: dailyLog, 
+                library: savedItems, 
+                goal: dailyGoal,
+                lastResetDate: lastResetDate 
+            }));
             render();
         }
 
