@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Calorie Tracker</title>
+    <title>MacroFactor</title>
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -24,11 +24,12 @@
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap');
         body { 
             font-family: 'Inter', sans-serif; 
             -webkit-tap-highlight-color: transparent; 
             font-size: 14px;
+            font-weight: 400; /* Uniform font weight */
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
@@ -39,15 +40,14 @@
             font-weight: 400;
             font-size: 14px !important;
         }
-        .header-text { font-weight: 700; }
         
         * {
             letter-spacing: 0px !important;
         }
         
         .tab-active {
-            color: #fbbf24;
-            border-bottom: 2px solid #fbbf24;
+            color: #f97316; /* orange-500 */
+            border-bottom: 2px solid #f97316;
         }
         .tab-inactive {
             color: #737373;
@@ -56,17 +56,17 @@
         .tab-inactive:hover { color: #a3a3a3; }
     </style>
 </head>
-<body class="bg-neutral-950 text-neutral-100 pb-24 selection:bg-amber-500/30">
+<body class="bg-neutral-950 text-neutral-100 pb-24 selection:bg-orange-500/30">
     <div id="app" class="max-w-4xl mx-auto p-4 md:p-8 space-y-8">
         
         <!-- Goal Modal -->
         <div id="goal-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
             <div class="bg-neutral-900 border border-neutral-800 p-6 rounded-xl w-full max-w-sm shadow-2xl">
-                <h3 class="header-text text-lg mb-4 text-white">Set Daily Goal</h3>
-                <input id="goal-input" type="number" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-white mb-6 outline-none focus:ring-2 focus:ring-amber-500 placeholder-neutral-500" placeholder="e.g. 2000">
+                <h3 class="text-lg mb-4 text-white">Set Daily Goal</h3>
+                <input id="goal-input" type="number" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-white mb-6 outline-none focus:ring-2 focus:ring-orange-500 placeholder-neutral-500" placeholder="e.g. 2000">
                 <div class="flex gap-3">
-                    <button onclick="closeGoalModal()" class="flex-1 py-3 rounded-lg font-bold text-neutral-400 hover:bg-neutral-800 transition-colors">Cancel</button>
-                    <button onclick="saveGoalFromModal()" class="flex-1 py-3 rounded-lg font-bold bg-amber-500 text-black hover:bg-amber-400 transition-colors">Save</button>
+                    <button onclick="closeGoalModal()" class="flex-1 py-3 rounded-lg text-neutral-400 hover:bg-neutral-800 transition-colors">Cancel</button>
+                    <button onclick="saveGoalFromModal()" class="flex-1 py-3 rounded-lg bg-orange-500 text-black hover:bg-orange-400 transition-colors">Save</button>
                 </div>
             </div>
         </div>
@@ -75,18 +75,18 @@
         <div id="log-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
             <div class="bg-neutral-900 border border-neutral-800 p-6 rounded-xl w-full max-w-sm shadow-2xl space-y-5">
                 <div class="flex justify-between items-center border-b border-neutral-800 pb-2">
-                    <h3 class="header-text text-lg text-white">Log Item</h3>
+                    <h3 class="text-lg text-white">Log Item</h3>
                     <div class="flex gap-4">
-                        <button onclick="setModalMode('daily')" id="modal-tab-daily" class="tab-active pb-1 text-xs header-text uppercase tracking-widest transition-all">Daily</button>
-                        <button onclick="setModalMode('library')" id="modal-tab-library" class="tab-inactive pb-1 text-xs header-text uppercase tracking-widest transition-all">Library</button>
+                        <button onclick="setModalMode('daily')" id="modal-tab-daily" class="tab-active pb-1 text-xs uppercase tracking-widest transition-all">Daily</button>
+                        <button onclick="setModalMode('library')" id="modal-tab-library" class="tab-inactive pb-1 text-xs uppercase tracking-widest transition-all">Library</button>
                     </div>
                 </div>
                 
                 <div class="space-y-4">
                     <div class="relative flex items-center group">
                         <div class="absolute left-3 z-10 pointer-events-none transition-colors duration-300">
-                            <svg id="modal-search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-500 group-focus-within:text-amber-500"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                            <svg id="modal-loading-spinner" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden animate-spin text-amber-500"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
+                            <svg id="modal-search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-500 group-focus-within:text-orange-500"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <svg id="modal-loading-spinner" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden animate-spin text-orange-500"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
                         </div>
                         <input 
                             id="modal-food-input"
@@ -94,14 +94,14 @@
                             inputmode="text"
                             enterkeyhint="go"
                             placeholder="Describe food or enter calories..."
-                            class="w-full bg-neutral-800 border border-neutral-700 rounded-lg py-3 pl-10 pr-4 text-white outline-none focus:ring-2 focus:ring-amber-500 placeholder-neutral-500 transition-all"
+                            class="w-full bg-neutral-800 border border-neutral-700 rounded-lg py-3 pl-10 pr-4 text-white outline-none focus:ring-2 focus:ring-orange-500 placeholder-neutral-500 transition-all"
                         >
                     </div>
-                    <p id="modal-error-msg" class="hidden text-rose-400 font-bold text-xs px-1"></p>
+                    <p id="modal-error-msg" class="hidden text-rose-400 text-xs px-1"></p>
 
                     <div class="flex gap-3">
-                        <button onclick="closeLogModal()" class="flex-1 py-3 rounded-lg font-bold text-neutral-400 hover:bg-neutral-800 transition-colors">Cancel</button>
-                        <button onclick="handleModalLog()" class="flex-1 py-3 rounded-lg font-bold bg-amber-500 text-black hover:bg-amber-400 transition-colors">Log</button>
+                        <button onclick="closeLogModal()" class="flex-1 py-3 rounded-lg text-neutral-400 hover:bg-neutral-800 transition-colors">Cancel</button>
+                        <button onclick="handleModalLog()" class="flex-1 py-3 rounded-lg bg-orange-500 text-black hover:bg-orange-400 transition-colors">Log</button>
                     </div>
                 </div>
             </div>
@@ -118,15 +118,15 @@
             <!-- Goal Progress Section -->
             <div class="bg-neutral-900 p-6 rounded-xl border border-neutral-800 shadow-xl">
                 <div class="flex justify-between items-end mb-3">
-                    <h2 class="header-text text-neutral-500 text-xs uppercase tracking-widest">Daily Progress</h2>
-                    <button onclick="editGoal()" class="text-xs text-amber-500 hover:text-amber-400 header-text uppercase tracking-widest transition-colors cursor-pointer outline-none">
+                    <h2 class="text-neutral-500 text-xs uppercase tracking-widest">Daily Progress</h2>
+                    <button onclick="editGoal()" class="text-xs text-orange-500 hover:text-orange-400 uppercase tracking-widest transition-colors cursor-pointer outline-none">
                         Goal: <span id="goal-display">2000</span>
                     </button>
                 </div>
                 <div class="w-full bg-neutral-800 rounded-full h-3 overflow-hidden">
-                    <div id="progress-bar" class="bg-amber-500 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+                    <div id="progress-bar" class="bg-orange-500 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
                 </div>
-                <div class="mt-2 text-[10px] text-neutral-500 font-bold">
+                <div class="mt-2 text-[10px] text-neutral-500">
                     <span id="percent-display">0%</span>
                 </div>
             </div>
@@ -137,10 +137,10 @@
                 <!-- Input Section -->
                 <section class="bg-neutral-900 p-6 rounded-xl border border-neutral-800 shadow-xl space-y-4">
                     <div class="flex items-center gap-6 border-b border-neutral-800 pb-1">
-                        <button onclick="setMainMode('daily')" id="tab-daily" class="tab-active pb-2 header-text transition-all">
+                        <button onclick="setMainMode('daily')" id="tab-daily" class="tab-active pb-2 transition-all">
                             Log to Daily
                         </button>
-                        <button onclick="setMainMode('library')" id="tab-library" class="tab-inactive pb-2 header-text transition-all">
+                        <button onclick="setMainMode('library')" id="tab-library" class="tab-inactive pb-2 transition-all">
                             Save to Library
                         </button>
                     </div>
@@ -148,8 +148,8 @@
                     <!-- Main Dashboard Form -->
                     <form onsubmit="handleMainLog(event)" class="relative flex items-center group">
                         <div class="absolute left-1 z-10 pointer-events-none transition-colors duration-300">
-                            <svg id="main-search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-500 group-focus-within:text-amber-500"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                            <svg id="main-loading-spinner" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden animate-spin text-amber-500"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
+                            <svg id="main-search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-500 group-focus-within:text-orange-500"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <svg id="main-loading-spinner" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden animate-spin text-orange-500"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
                         </div>
                         <input 
                             id="food-input"
@@ -157,19 +157,19 @@
                             inputmode="text"
                             enterkeyhint="send"
                             placeholder="Describe food or enter calories..."
-                            class="relative z-20 w-full bg-neutral-850 border border-transparent focus:border-neutral-700 rounded-lg py-4 pl-5 pr-20 outline-none focus:ring-2 focus:ring-amber-500/50 transition-all block text-white placeholder-neutral-600"
+                            class="relative z-20 w-full bg-neutral-850 border border-transparent focus:border-neutral-700 rounded-lg py-4 pl-5 pr-20 outline-none focus:ring-2 focus:ring-orange-500/50 transition-all block text-white placeholder-neutral-600"
                         >
-                        <button type="submit" class="absolute right-2 z-30 bg-neutral-800 hover:bg-neutral-700 text-amber-500 font-bold py-2 px-4 rounded-md transition-colors border border-neutral-700 min-h-[40px]">
+                        <button type="submit" class="absolute right-2 z-30 bg-neutral-800 hover:bg-neutral-700 text-orange-500 py-2 px-4 rounded-md transition-colors border border-neutral-700 min-h-[40px]">
                             Log
                         </button>
                     </form>
-                    <p id="error-msg" class="hidden mt-3 text-rose-400 font-bold px-2"></p>
+                    <p id="error-msg" class="hidden mt-3 text-rose-400 text-xs px-2"></p>
                 </section>
 
                 <!-- Daily Log -->
                 <section class="bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden shadow-lg">
                     <div class="p-6 border-b border-neutral-800 bg-neutral-900/50">
-                        <h2 class="header-text flex items-center gap-2 text-neutral-500">Today's Log</h2>
+                        <h2 class="flex items-center gap-2 text-neutral-500">Today's Log</h2>
                     </div>
                     <div id="log-container" class="divide-y divide-neutral-800 max-h-[500px] overflow-y-auto no-scrollbar">
                     </div>
@@ -178,7 +178,7 @@
 
             <!-- Library Section -->
             <aside class="bg-neutral-900 rounded-xl border border-neutral-800 h-fit overflow-hidden shadow-lg">
-                <div class="p-6 border-b border-neutral-800 bg-neutral-900/50 header-text text-neutral-500">Library</div>
+                <div class="p-6 border-b border-neutral-800 bg-neutral-900/50 text-neutral-500">Library</div>
                 <div id="library-container" class="p-2 space-y-1 max-h-[500px] overflow-y-auto no-scrollbar">
                 </div>
             </aside>
@@ -340,15 +340,15 @@
 
         function setMainMode(mode) {
             mainInputMode = mode;
-            elements.tabDaily.className = mode === 'daily' ? 'tab-active pb-2 header-text' : 'tab-inactive pb-2 header-text';
-            elements.tabLibrary.className = mode === 'library' ? 'tab-active pb-2 header-text' : 'tab-inactive pb-2 header-text';
+            elements.tabDaily.className = mode === 'daily' ? 'tab-active pb-2' : 'tab-inactive pb-2';
+            elements.tabLibrary.className = mode === 'library' ? 'tab-active pb-2' : 'tab-inactive pb-2';
             elements.mainInput.placeholder = mode === 'daily' ? "Describe food or enter calories..." : "Item to save...";
         }
 
         function setModalMode(mode) {
             modalInputMode = mode;
-            elements.modalTabDaily.className = mode === 'daily' ? 'tab-active pb-1 text-xs header-text uppercase tracking-widest' : 'tab-inactive pb-1 text-xs header-text uppercase tracking-widest';
-            elements.modalTabLibrary.className = mode === 'library' ? 'tab-active pb-1 text-xs header-text uppercase tracking-widest' : 'tab-inactive pb-1 text-xs header-text uppercase tracking-widest';
+            elements.modalTabDaily.className = mode === 'daily' ? 'tab-active pb-1 text-xs uppercase tracking-widest' : 'tab-inactive pb-1 text-xs uppercase tracking-widest';
+            elements.modalTabLibrary.className = mode === 'library' ? 'tab-active pb-1 text-xs uppercase tracking-widest' : 'tab-inactive pb-1 text-xs uppercase tracking-widest';
             elements.modalInput.placeholder = mode === 'daily' ? "Describe food or enter calories..." : "Item to save...";
         }
 
@@ -431,8 +431,8 @@
 
             elements.stats.innerHTML = `
                 <div class="flex-1 border-b md:border-b-0 md:border-r border-neutral-800 pb-4 md:pb-0 pr-0 md:pr-8">
-                    <span class="header-text text-neutral-500 text-[11px] uppercase tracking-widest">Total Calories</span>
-                    <div class="header-text text-amber-500 text-4xl mt-1 leading-none">${Math.round(totals.cal)}<span class="ml-1 opacity-50 text-neutral-400 font-normal text-xs uppercase">kcal</span></div>
+                    <span class="text-neutral-500 text-[11px] uppercase tracking-widest">Total Calories</span>
+                    <div class="text-orange-500 text-4xl mt-1 leading-none">${Math.round(totals.cal)}<span class="ml-1 opacity-50 text-neutral-400 font-normal text-xs uppercase">kcal</span></div>
                 </div>
                 <div class="flex flex-1 flex-wrap gap-8 w-full">
                     ${statCard('Protein', Math.round(totals.p), 'g', 'text-red-500')}
@@ -444,7 +444,7 @@
             elements.log.innerHTML = dailyLog.map(item => `
                 <div class="p-4 flex items-center justify-between hover:bg-neutral-800/50 transition-colors">
                     <div>
-                        <h3 class="header-text text-white capitalize">${item.name}</h3>
+                        <h3 class="text-white capitalize">${item.name}</h3>
                         <p class="text-neutral-500 mt-0.5">${item.calories} kcal • P: ${item.protein}g • C: ${item.carbs}g • F: ${item.fat}g</p>
                     </div>
                     <button onclick="deleteLog(${item.id})" class="p-2 text-neutral-600 hover:text-rose-400 min-h-[44px] min-w-[44px] flex items-center justify-center">
@@ -456,11 +456,11 @@
             elements.library.innerHTML = savedItems.map(item => `
                 <div class="p-3 rounded-lg hover:bg-neutral-800 flex items-center justify-between">
                     <div class="flex-1" onclick="addLogItem({name:'${item.name.replace(/'/g, "\\'")}',calories:${item.calories},protein:${item.protein},carbs:${item.carbs},fat:${item.fat}})">
-                        <p class="header-text capitalize text-neutral-200">${item.name}</p>
+                        <p class="capitalize text-neutral-200">${item.name}</p>
                         <p class="text-neutral-500">${item.calories} kcal</p>
                     </div>
                     <div class="flex gap-1">
-                        <button onclick="addLogItem({name:'${item.name.replace(/'/g, "\\'")}',calories:${item.calories},protein:${item.protein},carbs:${item.carbs},fat:${item.fat}})" class="p-2 text-neutral-600 hover:text-amber-500 min-h-[44px] min-w-[44px] flex items-center justify-center">
+                        <button onclick="addLogItem({name:'${item.name.replace(/'/g, "\\'")}',calories:${item.calories},protein:${item.protein},carbs:${item.carbs},fat:${item.fat}})" class="p-2 text-neutral-600 hover:text-orange-500 min-h-[44px] min-w-[44px] flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         </button>
                         <button onclick="deleteLibrary(${item.id})" class="p-2 text-neutral-600 hover:text-rose-400 min-h-[44px] min-w-[44px] flex items-center justify-center">
@@ -472,7 +472,7 @@
         }
 
         function statCard(label, val, unit, colorClass) {
-            return `<div class="flex flex-col"><span class="header-text text-neutral-500 text-[10px] uppercase tracking-widest">${label}</span><div class="header-text ${colorClass} mt-1">${val}<span class="ml-0.5 opacity-50 text-neutral-400 font-normal text-[10px]">${unit}</span></div></div>`;
+            return `<div class="flex flex-col"><span class="text-neutral-500 text-[10px] uppercase tracking-widest">${label}</span><div class="${colorClass} mt-1">${val}<span class="ml-0.5 opacity-50 text-neutral-400 font-normal text-[10px]">${unit}</span></div></div>`;
         }
 
         // Modal Input Enter Key
