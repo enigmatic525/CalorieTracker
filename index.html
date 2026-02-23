@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -38,19 +38,29 @@
             user-select: text !important;
         }
         * { letter-spacing: 0px !important; }
+        
+        .tab-active {
+            color: #d4d4d4; 
+            border-bottom: 2px solid #d4d4d4;
+        }
+        .tab-inactive {
+            color: #737373;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-inactive:hover { color: #a3a3a3; }
     </style>
 </head>
-<body class="bg-neutral-950 text-neutral-100 pb-24 selection:bg-amber-500/30">
+<body class="bg-neutral-950 text-neutral-300 pb-24 selection:bg-neutral-300/30">
     <div id="app" class="max-w-md mx-auto px-4 pt-6 pb-8 space-y-8">
         
         <!-- Goal Modal -->
         <div id="goal-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
             <div class="bg-neutral-900 border border-neutral-800 p-6 rounded-xl w-full max-w-sm shadow-2xl">
-                <h3 class="text-lg mb-4 text-white">Set Daily Goal</h3>
-                <input id="goal-input" type="number" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-white mb-6 outline-none focus:ring-2 focus:ring-amber-500 placeholder-neutral-500" placeholder="e.g. 2000">
+                <h3 class="text-lg mb-4 text-neutral-300">Set Daily Goal</h3>
+                <input id="goal-input" type="number" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-neutral-300 mb-6 outline-none focus:ring-2 focus:ring-neutral-300 placeholder-neutral-500" placeholder="e.g. 2000">
                 <div class="flex gap-3">
                     <button onclick="closeGoalModal()" class="flex-1 py-3 rounded-lg text-neutral-400 hover:bg-neutral-800 transition-colors">Cancel</button>
-                    <button onclick="saveGoalFromModal()" class="flex-1 py-3 rounded-lg bg-amber-500 text-black hover:bg-amber-400 transition-colors">Save</button>
+                    <button onclick="saveGoalFromModal()" class="flex-1 py-3 rounded-lg bg-neutral-300 text-black hover:bg-neutral-400 transition-colors">Save</button>
                 </div>
             </div>
         </div>
@@ -59,19 +69,19 @@
         <header class="bg-neutral-900 p-6 rounded-xl border border-neutral-800 shadow-xl space-y-6 text-center">
             <div>
                 <div class="text-neutral-500 text-xs uppercase tracking-widest mb-2">Total Calories</div>
-                <div class="text-amber-500 text-6xl leading-none" id="total-display">0</div>
+                <div class="text-neutral-300 text-6xl leading-none" id="total-display">0</div>
             </div>
 
             <!-- Goal Progress Section -->
             <div class="space-y-2">
                 <div class="flex justify-between items-end">
                     <span id="percent-display" class="text-xs text-neutral-500">0%</span>
-                    <button onclick="editGoal()" class="text-xs text-amber-500 hover:text-amber-400 uppercase tracking-widest transition-colors cursor-pointer outline-none">
+                    <button onclick="editGoal()" class="text-xs text-neutral-300 hover:text-neutral-400 uppercase tracking-widest transition-colors cursor-pointer outline-none">
                         Goal: <span id="goal-display">2000</span>
                     </button>
                 </div>
                 <div class="w-full bg-neutral-800 rounded-full h-3 overflow-hidden">
-                    <div id="progress-bar" class="bg-amber-500 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+                    <div id="progress-bar" class="bg-neutral-300 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
                 </div>
             </div>
         </header>
@@ -79,13 +89,13 @@
         <!-- Controls -->
         <section class="space-y-4">
             <div class="grid grid-cols-3 gap-3">
-                <button onclick="addCalories(50)" class="bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-amber-500 py-4 rounded-xl transition-colors text-lg active:scale-95">
+                <button onclick="addCalories(50)" class="bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 py-4 rounded-xl transition-colors text-lg active:scale-95">
                     +50
                 </button>
-                <button onclick="addCalories(100)" class="bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-amber-500 py-4 rounded-xl transition-colors text-lg active:scale-95">
+                <button onclick="addCalories(100)" class="bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 py-4 rounded-xl transition-colors text-lg active:scale-95">
                     +100
                 </button>
-                <button onclick="addCalories(500)" class="bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-amber-500 py-4 rounded-xl transition-colors text-lg active:scale-95">
+                <button onclick="addCalories(500)" class="bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 py-4 rounded-xl transition-colors text-lg active:scale-95">
                     +500
                 </button>
             </div>
@@ -96,9 +106,9 @@
                     type="number" 
                     inputmode="numeric" 
                     placeholder="Custom amount..." 
-                    class="flex-1 bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-4 text-white outline-none focus:border-amber-500/50 transition-colors placeholder-neutral-600"
+                    class="flex-1 bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-4 text-neutral-300 outline-none focus:border-neutral-300/50 transition-colors placeholder-neutral-600"
                 >
-                <button type="submit" class="bg-amber-500 hover:bg-amber-400 text-black px-6 rounded-xl transition-colors font-bold active:scale-95">
+                <button type="submit" class="bg-neutral-300 hover:bg-neutral-400 text-black px-6 rounded-xl transition-colors font-bold active:scale-95">
                     Add
                 </button>
             </form>
@@ -219,7 +229,7 @@
             elements.log.innerHTML = dailyLog.map(item => `
                 <div class="p-4 flex items-center justify-between hover:bg-neutral-800/50 transition-colors">
                     <div>
-                        <div class="text-white">+${item.amount} kcal</div>
+                        <div class="text-neutral-300">+${item.amount} kcal</div>
                         <div class="text-neutral-500 text-xs mt-1">${item.time}</div>
                     </div>
                     <button onclick="deleteEntry(${item.id})" class="p-2 text-neutral-600 hover:text-rose-400 min-h-[44px] min-w-[44px] flex items-center justify-center">
